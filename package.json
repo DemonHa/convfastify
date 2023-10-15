@@ -5,10 +5,14 @@
   "main": "build/index.js",
   "license": "MIT",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "start": "tsc && node ./build/server.js"
   },
   "dependencies": {
+    "@types/node": "^20.8.6",
+    "fastify": "^4.24.2",
     "fastify-plugin": "^4.5.1",
+    "glob": "^10.3.10",
     "typescript": "^5.2.2"
   }
 }
