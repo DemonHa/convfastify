@@ -1,0 +1,14 @@
+{
+  "name": "convfastify",
+  "version": "1.0.0",
+  "private": "true",
+  "main": "build/index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "fastify-plugin": "^4.5.1",
+    "typescript": "^5.2.2"
+  }
+}
