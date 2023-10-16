@@ -2,9 +2,9 @@ import fp from "fastify-plugin";
 import { glob } from "glob";
 import fastifySwaggerUi from "@fastify/swagger-ui";
 import fastifySwagger from "@fastify/swagger";
-import { ExtractSecondParam } from "./types";
 
 import { swaggerConfig, swaggerUiConfig } from "./default-config";
+import { ExtractSecondParam } from "./types";
 
 const convfastify = fp<
   { pattern: string } & {
