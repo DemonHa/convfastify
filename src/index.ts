@@ -2,57 +2,23 @@ import fp from "fastify-plugin";
 import { glob } from "glob";
 import fastifySwaggerUi from "@fastify/swagger-ui";
 import fastifySwagger from "@fastify/swagger";
+import { ExtractSecondParam } from "./types";
 
-const convfastify = fp<{ pattern: string }>(
+const convfastify = fp<
+  { pattern: string } & {
+    swagger: ExtractSecondParam<typeof fastifySwagger>;
+  } & { swaggerUi: ExtractSecondParam<typeof fastifySwaggerUi> }
+>(
   async (fastify, opt) => {
+    // Check for patter to load routes
     if (!opt.pattern) throw "Please specify a pattern to load files";
     const routePaths = glob.sync(opt.pattern, { absolute: true });
 
-    fastify.register(fastifySwagger, {
-      openapi: {
-        info: {
-          title: "Open API",
-          description: "Open API Documentation",
-          version: "1.0.0",
-        },
-        servers: [
-          {
-            url: "http://localhost",
-          },
-        ],
-        components: {
-          securitySchemes: {
-            bearerAuth: {
-              type: "http",
-              scheme: "bearer",
-            },
-          },
-        },
-      },
-    });
+    // Register swagger
+    fastify.register(fastifySwagger, opt.swagger);
+    fastify.register(fastifySwaggerUi, opt.swaggerUi);
 
-    fastify.register(fastifySwaggerUi, {
-      routePrefix: "/docs",
-      uiConfig: {
-        docExpansion: "full",
-        deepLinking: false,
-      },
-      uiHooks: {
-        onRequest: function (_request, _reply, next) {
-          next();
-        },
-        preHandler: function (_request, _reply, next) {
-          next();
-        },
-      },
-      staticCSP: true,
-      transformStaticCSP: (header) => header,
-      transformSpecification: (swaggerObject) => {
-        return swaggerObject;
-      },
-      transformSpecificationClone: true,
-    });
-
+    // Register routes
     fastify.register(async (fastify) => {
       for (const routePath of routePaths) {
         const route = require(routePath);
