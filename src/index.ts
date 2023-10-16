@@ -4,10 +4,12 @@ import fastifySwaggerUi from "@fastify/swagger-ui";
 import fastifySwagger from "@fastify/swagger";
 import { ExtractSecondParam } from "./types";
 
+import { swaggerConfig, swaggerUiConfig } from "./default-config";
+
 const convfastify = fp<
   { pattern: string } & {
-    swagger: ExtractSecondParam<typeof fastifySwagger>;
-  } & { swaggerUi: ExtractSecondParam<typeof fastifySwaggerUi> }
+    swagger?: ExtractSecondParam<typeof fastifySwagger>;
+  } & { swaggerUi?: ExtractSecondParam<typeof fastifySwaggerUi> }
 >(
   async (fastify, opt) => {
     // Check for patter to load routes
@@ -15,8 +17,11 @@ const convfastify = fp<
     const routePaths = glob.sync(opt.pattern, { absolute: true });
 
     // Register swagger
-    fastify.register(fastifySwagger, opt.swagger);
-    fastify.register(fastifySwaggerUi, opt.swaggerUi);
+    fastify.register(fastifySwagger, { ...swaggerConfig, ...opt.swagger });
+    fastify.register(fastifySwaggerUi, {
+      ...swaggerUiConfig,
+      ...opt.swaggerUi,
+    });
 
     // Register routes
     fastify.register(async (fastify) => {
