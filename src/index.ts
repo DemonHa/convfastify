@@ -6,35 +6,69 @@ import fastifySwagger from "@fastify/swagger";
 import { swaggerConfig, swaggerUiConfig } from "./default-config";
 import { ExtractSecondParam } from "./types";
 
-const convfastify = fp<
-  { pattern: string } & {
-    swagger?: ExtractSecondParam<typeof fastifySwagger>;
-  } & { swaggerUi?: ExtractSecondParam<typeof fastifySwaggerUi> }
->(
-  async (fastify, opt) => {
-    // Check for patter to load routes
-    if (!opt.pattern) throw "Please specify a pattern to load files";
-    const routePaths = glob.sync(opt.pattern, { absolute: true });
+type ConvTypes = {
+  path?: string;
+  swagger: boolean;
+  swaggerConfigs: ExtractSecondParam<typeof fastifySwagger>;
+  swaggerUiConfigs: ExtractSecondParam<typeof fastifySwaggerUi>;
+};
 
-    // Register swagger
-    fastify.register(fastifySwagger, { ...swaggerConfig, ...opt.swagger });
-    fastify.register(fastifySwaggerUi, {
-      ...swaggerUiConfig,
-      ...opt.swaggerUi,
-    });
+const convfastify = () => {
+  const options: ConvTypes = {
+    path: undefined,
+    swagger: false,
+    swaggerConfigs: swaggerConfig,
+    swaggerUiConfigs: swaggerUiConfig,
+  };
 
-    // Register routes
-    fastify.register(async (fastify) => {
-      for (const routePath of routePaths) {
-        const route = require(routePath);
-        fastify.route(route.default);
-      }
-    });
-  },
-  {
-    fastify: "4.x",
-    name: "convfastify",
-  }
-);
+  return {
+    serveSwagger: function (config?: {
+      swagger?: ConvTypes["swaggerConfigs"];
+      swaggerUi?: ConvTypes["swaggerUiConfigs"];
+    }) {
+      options.swagger = true;
+      options.swaggerConfigs = {
+        ...options.swaggerConfigs,
+        ...config?.swagger,
+      };
+      options.swaggerUiConfigs = {
+        ...options.swaggerUiConfigs,
+        ...config?.swaggerUi,
+      };
+      return this;
+    },
+    loadFrom: function (path: string) {
+      options.path = path;
+      return this;
+    },
+    register: () => {
+      return fp(
+        async (fastify) => {
+          if (options.swagger) {
+            // Register swagger
+            fastify.register(fastifySwagger, options.swaggerConfigs);
+            fastify.register(fastifySwaggerUi, options.swaggerUiConfigs);
+          }
+
+          if (options.path != undefined) {
+            const routePaths = glob.sync(options.path, { absolute: true });
+
+            // Register routes
+            fastify.register(async (fastify) => {
+              for (const routePath of routePaths) {
+                const route = require(routePath);
+                fastify.route(route.default);
+              }
+            });
+          }
+        },
+        {
+          fastify: "4.x",
+          name: "convfastify",
+        }
+      );
+    },
+  };
+};
 
 export default convfastify;
