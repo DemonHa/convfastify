@@ -5,6 +5,8 @@ import fastifySwagger from "@fastify/swagger";
 
 import { swaggerConfig, swaggerUiConfig } from "./default-config";
 import { ExtractSecondParam } from "./types";
+import { FastifyPluginAsync } from "fastify";
+import route from "./route";
 
 type ConvTypes = {
   path?: string;
@@ -13,7 +15,16 @@ type ConvTypes = {
   swaggerUiConfigs: ExtractSecondParam<typeof fastifySwaggerUi>;
 };
 
-const convfastify = () => {
+type ConvFasfifyReturnType = {
+  serveSwagger: (config?: {
+    swagger?: ConvTypes["swaggerConfigs"];
+    swaggerUi?: ConvTypes["swaggerUiConfigs"];
+  }) => ConvFasfifyReturnType;
+  loadFrom: (path: string) => ConvFasfifyReturnType;
+  register: () => FastifyPluginAsync;
+};
+
+const convfastify = (): ConvFasfifyReturnType => {
   const options: ConvTypes = {
     path: undefined,
     swagger: false,
@@ -72,3 +83,4 @@ const convfastify = () => {
 };
 
 export default convfastify;
+export { route };
