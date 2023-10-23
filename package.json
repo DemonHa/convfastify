@@ -2,21 +2,26 @@
   "name": "convfastify",
   "version": "1.0.0",
   "private": "true",
-  "main": "build/index.js",
+  "main": "./build/index.js",
+  "repository": "https://github.com/DemonHa/convfastify",
   "license": "MIT",
+  "files": [
+    "/build"
+  ],
   "scripts": {
-    "build": "tsc",
-    "start": "tsc && node ./build/server.js"
+    "build": "rm -rf ./build && tsc"
   },
   "dependencies": {
     "@fastify/swagger": "^8.11.0",
     "@fastify/swagger-ui": "^1.10.1",
-    "@fastify/type-provider-json-schema-to-ts": "^2.2.2",
-    "@types/node": "^20.8.6",
-    "fastify": "^4.24.2",
     "fastify-plugin": "^4.5.1",
     "glob": "^10.3.10",
-    "json-schema-to-ts": "^2.9.2",
+    "json-schema-to-ts": "^2.9.2"
+  },
+  "devDependencies": {
+    "@fastify/type-provider-json-schema-to-ts": "^2.2.2",
+    "@types/node": "^20.8.6",
+    "fastify": "^4.24.3",
     "typescript": "^5.2.2"
   }
 }
