@@ -1,7 +1,6 @@
 {
   "name": "convfastify",
   "version": "1.0.0",
-  "private": "true",
   "main": "./build/index.js",
   "repository": "https://github.com/DemonHa/convfastify",
   "license": "MIT",
@@ -9,6 +8,8 @@
     "/build"
   ],
   "scripts": {
+    "test": "vitest run",
+    "test:dev": "vitest run",
     "build": "rm -rf ./build && tsc"
   },
   "dependencies": {
@@ -22,6 +23,7 @@
     "@fastify/type-provider-json-schema-to-ts": "^2.2.2",
     "@types/node": "^20.8.6",
     "fastify": "^4.24.3",
+    "vitest": "^0.34.6",
     "typescript": "^5.2.2"
   }
 }
