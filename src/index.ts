@@ -5,7 +5,6 @@ import fastifySwagger from "@fastify/swagger";
 
 import { swaggerConfig, swaggerUiConfig } from "./default-config";
 import { ExtractSecondParam } from "./types";
-import { FastifyPluginAsync } from "fastify";
 import route from "./route";
 
 type ConvTypes = {
@@ -15,16 +14,7 @@ type ConvTypes = {
   swaggerUiConfigs: ExtractSecondParam<typeof fastifySwaggerUi>;
 };
 
-type ConvFasfifyReturnType = {
-  serveSwagger: (config?: {
-    swagger?: ConvTypes["swaggerConfigs"];
-    swaggerUi?: ConvTypes["swaggerUiConfigs"];
-  }) => ConvFasfifyReturnType;
-  loadFrom: (path: string) => ConvFasfifyReturnType;
-  register: () => FastifyPluginAsync;
-};
-
-const convfastify = (): ConvFasfifyReturnType => {
+const convfastify = () => {
   const options: ConvTypes = {
     path: undefined,
     swagger: false,
@@ -33,10 +23,13 @@ const convfastify = (): ConvFasfifyReturnType => {
   };
 
   return {
-    serveSwagger: function (config?: {
-      swagger?: ConvTypes["swaggerConfigs"];
-      swaggerUi?: ConvTypes["swaggerUiConfigs"];
-    }) {
+    serveSwagger: function (
+      this,
+      config?: {
+        swagger?: ConvTypes["swaggerConfigs"];
+        swaggerUi?: ConvTypes["swaggerUiConfigs"];
+      }
+    ): typeof this {
       options.swagger = true;
       options.swaggerConfigs = {
         ...options.swaggerConfigs,
@@ -48,7 +41,7 @@ const convfastify = (): ConvFasfifyReturnType => {
       };
       return this;
     },
-    loadFrom: function (path: string) {
+    loadFrom: function (this, path: string): typeof this {
       options.path = path;
       return this;
     },
