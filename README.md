@@ -2,6 +2,7 @@
 
 Conventionally load your routes to your fastify application.
 
+- Autoload routes
 - Typesafe route definition
 - Pre configured swagger
 
@@ -27,12 +28,14 @@ Register the plugin and load routes
 import fastify from "fastify";
 import convfastify from "convfastify";
 
-const app = fastify();
+const app = fastify({
+  logger: true,
+});
 
 app.register(
   convfastify()
     // Load routes
-    .loadFrom(`${__dirname}/routes/**/*`)
+    .loadFrom(`${__dirname}/routes/**/*.js`)
     // Serving swagger
     .serveSwagger()
     // Register the plugin
@@ -44,7 +47,7 @@ app.listen({
 });
 ```
 
-On the files under the `/routes`
+On the files under the `/routes` directory
 
 ```ts
 import { route } from "convfastify";
@@ -75,3 +78,5 @@ export default route({
   },
 });
 ```
+
+It will load the routes defined in the `routes` directory and also serve swagger.

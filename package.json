@@ -17,10 +17,10 @@
     "@fastify/swagger-ui": "^1.10.1",
     "fastify-plugin": "^4.5.1",
     "glob": "^10.3.10",
+    "@fastify/type-provider-json-schema-to-ts": "^2.2.2",
     "json-schema-to-ts": "^2.9.2"
   },
   "devDependencies": {
-    "@fastify/type-provider-json-schema-to-ts": "^2.2.2",
     "@types/node": "^20.8.6",
     "fastify": "^4.24.3",
     "vitest": "^0.34.6",

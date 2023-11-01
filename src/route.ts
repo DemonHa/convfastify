@@ -1,4 +1,4 @@
-import { JsonSchemaToTsProvider } from "@fastify/type-provider-json-schema-to-ts";
+import type { JsonSchemaToTsProvider } from "@fastify/type-provider-json-schema-to-ts";
 import {
   ContextConfigDefault,
   FastifySchema,

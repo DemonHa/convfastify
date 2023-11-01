@@ -14,7 +14,9 @@ describe("App", () => {
   });
 
   test("should load routes from the specified path", async () => {
-    app.register(convfastify().loadFrom(`${__dirname}/routes/**/*`).register());
+    app.register(
+      convfastify().loadFrom(`${__dirname}/routes/**/*.js`).register()
+    );
 
     const response = await app.inject({
       method: "GET",
@@ -28,7 +30,7 @@ describe("App", () => {
   test("should expose swagger interface", async () => {
     app.register(
       convfastify()
-        .loadFrom(`${__dirname}/routes/**/*`)
+        .loadFrom(`${__dirname}/routes/**/*.js`)
         .serveSwagger()
         .register()
     );
@@ -40,5 +42,13 @@ describe("App", () => {
 
     expect(response.statusCode).toEqual(302);
     expect(response.headers.location).toEqual("./docs/static/index.html");
+    expect(
+      (
+        await app.inject({
+          method: "GET",
+          url: "/",
+        })
+      ).body
+    ).toEqual(JSON.stringify({ message: "Hello World" }));
   });
 });
