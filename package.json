@@ -1,8 +1,13 @@
 {
   "name": "convfastify",
   "version": "1.0.0",
+  "author": "DemonHa",
   "main": "./build/index.js",
   "repository": "https://github.com/DemonHa/convfastify",
+  "bugs": {
+    "url": "https://github.com/DemonHa/convfastify/issues"
+  },
+  "description": "convfastify is a plugin for the Fastify framework that provides a conventional way of declaring routes",
   "license": "MIT",
   "files": [
     "/build"
