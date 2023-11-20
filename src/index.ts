@@ -4,15 +4,9 @@ import fastifySwaggerUi from "@fastify/swagger-ui";
 import fastifySwagger from "@fastify/swagger";
 
 import { swaggerConfig, swaggerUiConfig } from "./default-config";
-import { ExtractSecondParam } from "./types";
 import route from "./route";
 
-type ConvTypes = {
-  path?: string;
-  swagger: boolean;
-  swaggerConfigs: ExtractSecondParam<typeof fastifySwagger>;
-  swaggerUiConfigs: ExtractSecondParam<typeof fastifySwaggerUi>;
-};
+import type { ConvTypes } from "./types";
 
 const convfastify = () => {
   const options: ConvTypes = {
@@ -45,7 +39,7 @@ const convfastify = () => {
       options.path = path;
       return this;
     },
-    register: () => {
+    register: (pluginConfig?: { esm?: boolean }) => {
       return fp(
         async (fastify) => {
           if (options.swagger) {
@@ -60,7 +54,9 @@ const convfastify = () => {
             // Register routes
             fastify.register(async (fastify) => {
               for (const routePath of routePaths) {
-                const route = require(routePath);
+                const route = pluginConfig?.esm
+                  ? await import(routePath)
+                  : require(routePath);
                 fastify.route(route.default);
               }
             });

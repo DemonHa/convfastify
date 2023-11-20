@@ -51,4 +51,24 @@ describe("App", () => {
       ).body
     ).toEqual(JSON.stringify({ message: "Hello World" }));
   });
+
+  test("should load files written with esm syntax", async () => {
+    app.register(
+      convfastify()
+        .loadFrom(`${__dirname}/routes/**/*.mjs`)
+        .serveSwagger()
+        .register({
+          esm: true,
+        })
+    );
+
+    expect(
+      (
+        await app.inject({
+          method: "GET",
+          url: "/",
+        })
+      ).body
+    ).toEqual(JSON.stringify({ message: "Hello World" }));
+  });
 });
