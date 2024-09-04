@@ -56,7 +56,7 @@ On the files under the `/routes` directory:
 ```js
 const { route } = require("convfastify");
 
-module.exports.default = route({
+module.exports.default = route.define({
   method: "GET",
   url: "/",
   schema: {
@@ -120,7 +120,7 @@ On the files under the `/routes` directory:
 ```js
 import { route } from "convfastify";
 
-export default route({
+export default route.define({
   method: "GET",
   url: "/",
   schema: {
@@ -181,7 +181,7 @@ On the files under the `/routes` directory:
 ```ts
 import { route } from "convfastify";
 
-export default route({
+export default route.define({
   method: "GET",
   url: "/",
   schema: {
@@ -209,6 +209,59 @@ export default route({
 ```
 
 It will load the routes defined in the `routes` directory and serve swagger.
+
+### Using different type provider
+
+By default when you define routes, it is preconfigured to infer types using `json-schema-to-ts`, but you can use a different type provider.
+
+Example:
+
+```ts
+import { route } from "convfastify";
+import { TypeBoxTypeProvider, Type } from "@fastify/type-provider-typebox";
+
+export default route.withType<TypeBoxTypeProvider>().define({
+  url: "/",
+  method: "GET",
+  schema: {
+    querystring: Type.Object({
+      name: Type.String(),
+    }),
+    response: {
+      200: Type.Object({
+        name: Type.String(),
+      }),
+    },
+  },
+  handler: (req, res) => {
+    res.send({ name: req.query.name });
+  },
+});
+```
+
+# V2 Migration Guide
+
+This guide is intended to help with migration from convfastify v1 to v2.
+
+## Braking changes
+
+### `route` is an object
+
+To support different type providers, `route` is not a function you can call directly but an object.
+
+To migrate it with minimal effort:
+
+- Create a file `src/route.ts`
+
+```ts
+import { route as convroute } from "convfastify";
+import { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
+
+// NOTE: in this example we are using `TypeBoxTypeProvider` but you can use any provider
+export const route = convroute.withType<TypeBoxTypeProvider>().define;
+```
+
+Now you can import `route` from the `/src/route.ts` instead of `convfastify` directly on all of your routes
 
 # API
 
