@@ -1,4 +1,4 @@
-import type { JsonSchemaToTsProvider } from "@fastify/type-provider-json-schema-to-ts";
+import { JsonSchemaToTsProvider } from "@fastify/type-provider-json-schema-to-ts";
 import {
   ContextConfigDefault,
   FastifySchema,
@@ -10,21 +10,32 @@ import {
   RouteOptions,
 } from "fastify";
 
-const route = <
-  TypeProvider extends FastifyTypeProvider = JsonSchemaToTsProvider,
-  RouteGeneric extends RouteGenericInterface = RouteGenericInterface,
-  ContextConfig = ContextConfigDefault,
-  const SchemaCompiler extends FastifySchema = FastifySchema
->(
-  routeDefinition: RouteOptions<
-    RawServerDefault,
-    RawRequestDefaultExpression,
-    RawReplyDefaultExpression,
-    RouteGeneric,
-    ContextConfig,
-    SchemaCompiler,
-    TypeProvider
-  >
-) => routeDefinition;
+interface RouteDefinition<
+  T extends FastifyTypeProvider = JsonSchemaToTsProvider
+> {
+  define: <const SchemaCompiler extends FastifySchema = FastifySchema>(
+    route: RouteOptions<
+      RawServerDefault,
+      RawRequestDefaultExpression,
+      RawReplyDefaultExpression,
+      RouteGenericInterface,
+      ContextConfigDefault,
+      SchemaCompiler,
+      T
+    >
+  ) => typeof route;
+  withType: <
+    TNew extends FastifyTypeProvider = FastifyTypeProvider
+  >() => RouteDefinition<TNew>;
+}
+
+const route: RouteDefinition = {
+  withType<T extends FastifyTypeProvider = FastifyTypeProvider>() {
+    return this as unknown as RouteDefinition<T>;
+  },
+  define: (routeDefinition) => {
+    return routeDefinition;
+  },
+};
 
 export default route;

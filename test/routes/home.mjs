@@ -1,6 +1,6 @@
 import { route } from "./../../src/index";
 
-export default route({
+export default route.define({
   url: "/",
   method: "GET",
   schema: {
